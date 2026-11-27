@@ -1,0 +1,32 @@
+{
+    "name": "multi-tenant-messaging-api",
+    "version": "1.0.0",
+    "description": "Multi-tenant messaging REST API",
+    "main": "src/server.js",
+    "scripts": {
+        "dev": "nodemon src/server.js",
+        "start": "node src/server.js",
+        "test": "jest --runInBand",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.2",
+        "helmet": "^8.0.0",
+        "pino-http": "^10.3.0",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "nodemon": "^3.1.7",
+        "prisma": "^6.0.0",
+        "supertest": "^7.0.0"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "clearMocks": true
+    }
+}

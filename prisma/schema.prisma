@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+model Conversation {
+  id        String    @id
+  tenantId  String
+  messages  Message[]
+  createdAt DateTime  @default(now())
+
+  @@unique([tenantId, id])
+  @@index([tenantId])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  tenantId       String
+  conversationId String
+  to             String
+  text           String
+  status         MessageStatus @default(QUEUED)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  sentAt         DateTime?
+  deliveredAt    DateTime?
+  readAt         DateTime?
+  failedAt       DateTime?
+
+conversation Conversation @relation(fields: [tenantId, conversationId], references: [tenantId, id])
+
+  events WebhookEvent[]
+
+  @@index([tenantId, conversationId, createdAt, id])
+  @@index([tenantId, id])
+}
+
+model WebhookEvent {
+  id         String        @id @default(cuid())
+  eventId    String        @unique
+  messageId  String
+  status     MessageStatus
+  occurredAt DateTime
+  receivedAt DateTime      @default(now())
+
+  message Message @relation(fields: [messageId], references: [id])
+
+  @@index([messageId, occurredAt])
+}
